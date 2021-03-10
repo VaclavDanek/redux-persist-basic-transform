@@ -12,10 +12,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vdanek/redux-persist-basic-transform"
+    "url": "https://github.com/VaclavDanek/redux-persist-basic-transform"
   },
   "dependencies": {
     "crypto-js": "^4.0.0",
+    "fast-safe-stringify": "^2.0.7",
     "immutable": "^3.8.2",
     "lz-string": "^1.4.4",
     "redux-persist": "^5.4.0",

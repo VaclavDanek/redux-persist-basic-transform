@@ -9,9 +9,9 @@ exports["default"] = void 0;
 
 var _reduxPersist = require("redux-persist");
 
-var _seamlessImmutable = _interopRequireDefault(require("seamless-immutable"));
+var _immutable = require("immutable");
 
-var _immutable = _interopRequireDefault(require("immutable"));
+var _seamlessImmutable = _interopRequireDefault(require("seamless-immutable"));
 
 var _encUtf = _interopRequireDefault(require("crypto-js/enc-utf8"));
 
@@ -34,6 +34,29 @@ var JSONStringify = function JSONStringify(object) {
     // logError(`Error while stringifying, perhaps due to circular references`, error)
     return (0, _fastSafeStringify["default"])(object);
   }
+};
+
+var adjustDataStructure = function adjustDataStructure(object) {
+  var dataStructure = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'plain';
+  if (!object) return {};
+
+  switch (dataStructure) {
+    case 'immutable':
+      if (!_immutable.Iterable.isIterable(object)) {
+        return (0, _immutable.fromJS)(object);
+      }
+
+      break;
+
+    case 'seamless-immutable':
+      if (!_seamlessImmutable["default"].isImmutable(object)) {
+        return (0, _seamlessImmutable["default"])(object);
+      }
+
+      break;
+  }
+
+  return object;
 };
 
 var _default = function _default(_ref) {
@@ -80,10 +103,10 @@ var _default = function _default(_ref) {
       config[key] = {};
     }
 
-    var defaultState = config[key].defaultState || {};
+    var defaultState = config[key].defaultState;
 
     if (config[key].version && outboundState.version !== config[key].version || config[key].expire && Date.now() >= outboundState.expire) {
-      return defaultState;
+      return adjustDataStructure(defaultState, dataStructure);
     }
 
     var state = outboundState.state;
@@ -102,7 +125,7 @@ var _default = function _default(_ref) {
             state = JSON.parse(bytes.toString(_encUtf["default"]));
           } catch (error) {
             logError("Error while encrypting ".concat(key, " state"), error);
-            return defaultState;
+            return adjustDataStructure(defaultState, dataStructure);
           }
         } else if (compress) {
           try {
@@ -111,7 +134,7 @@ var _default = function _default(_ref) {
             state = JSON.parse(decompressed);
           } catch (error) {
             logError("Error while compressing ".concat(key, " state"), error);
-            return defaultState;
+            return adjustDataStructure(defaultState, dataStructure);
           }
         }
       }
@@ -124,15 +147,13 @@ var _default = function _default(_ref) {
 
       switch (dataStructure) {
         case 'immutable':
-          return _immutable["default"].fromJS(state);
+          return (0, _immutable.fromJS)(state);
 
         case 'seamless-immutable':
           return (0, _seamlessImmutable["default"])(state);
-
-        case 'plain':
-        default:
-          return state;
       }
+
+      return state;
     }
 
     return outboundState;

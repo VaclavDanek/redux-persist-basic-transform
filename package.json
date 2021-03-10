@@ -1,0 +1,41 @@
+{
+  "name": "redux-persist-basic-transform",
+  "description": "This transform allows filter, encrypt, compress, versioning and expiring persisted data from redux states. Also works with immutable and seamless-immutable data structures.",
+  "version": "1.0.0",
+  "author": "Václav Daněk",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "babel lib --out-dir dist",
+    "minify": "minify dist -d dist",
+    "postinstall": "yarn audit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vdanek/redux-persist-basic-transform"
+  },
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "immutable": "^3.8.2",
+    "lz-string": "^1.4.4",
+    "redux-persist": "^5.4.0",
+    "seamless-immutable": "^7.1.2"
+  },
+  "devDependencies": {
+    "ajv": "^5.2.2",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.1",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "babel-minify": "^0.5.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "prettier": "^1.16.3"
+  }
+}

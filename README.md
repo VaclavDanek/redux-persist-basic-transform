@@ -1,9 +1,9 @@
 # Info
 This transform allows filter, encrypt, compress, versioning and expiring persisted data from redux states. Also works with immutable and seamless-immutable data structures.
 
-## Install
+## Yarn install
 ```git
-yarn add https://github.com/VaclavDanek/redux-persist-basic-transform
+yarn add redux-persist-basic-transform
 ```
 
 ### Configuration

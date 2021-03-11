@@ -1,6 +1,6 @@
 {
   "name": "redux-persist-basic-transform",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "This transform allows filter, encrypt, compress, versioning and expiring persisted data from redux states. Also works with immutable and seamless-immutable data structures.",
   "keywords": [
     "redux",
@@ -25,8 +25,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "babel lib --out-dir dist",
-    "minify": "minify dist -d dist",
-    "postinstall": "yarn audit"
+    "minify": "minify dist -d dist"
   },
   "repository": {
     "type": "git",

@@ -1,8 +1,26 @@
 {
   "name": "redux-persist-basic-transform",
-  "description": "This transform allows filter, encrypt, compress, versioning and expiring persisted data from redux states. Also works with immutable and seamless-immutable data structures.",
   "version": "1.0.0",
-  "author": "Václav Daněk",
+  "description": "This transform allows filter, encrypt, compress, versioning and expiring persisted data from redux states. Also works with immutable and seamless-immutable data structures.",
+  "keywords": [
+    "redux",
+    "redux-persist",
+    "redux-persist-transform",
+    "expiration",
+    "versioning",
+    "compress",
+    "encrypt",
+    "immutable",
+    "seamless-immutable"
+  ],
+  "author": {
+    "name": "Václav Daněk",
+    "email": "vaclav.danek@seznam.cz"
+  },
+  "homepage": "https://github.com/VaclavDanek/redux-persist-basic-transform",
+  "bugs": {
+    "url": "https://github.com/VaclavDanek/redux-persist-basic-transform/issues"
+  },
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {

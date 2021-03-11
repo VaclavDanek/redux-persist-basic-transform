@@ -7,6 +7,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
 var _reduxPersist = require("redux-persist");
 
 var _immutable = require("immutable");
@@ -20,6 +22,10 @@ var _aes = _interopRequireDefault(require("crypto-js/aes"));
 var _lzString = _interopRequireDefault(require("lz-string"));
 
 var _fastSafeStringify = _interopRequireDefault(require("fast-safe-stringify"));
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var logError = function logError(message, error) {
   if (process.env.NODE_ENV === 'development') {
@@ -38,22 +44,23 @@ var JSONStringify = function JSONStringify(object) {
 
 var adjustDataStructure = function adjustDataStructure(object) {
   var dataStructure = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'plain';
-  if (!object) return {};
 
-  switch (dataStructure) {
-    case 'immutable':
-      if (!_immutable.Iterable.isIterable(object)) {
-        return (0, _immutable.fromJS)(object);
-      }
+  if (object) {
+    switch (dataStructure) {
+      case 'immutable':
+        if (!_immutable.Iterable.isIterable(object)) {
+          return (0, _immutable.fromJS)(object);
+        }
 
-      break;
+        break;
 
-    case 'seamless-immutable':
-      if (!_seamlessImmutable["default"].isImmutable(object)) {
-        return (0, _seamlessImmutable["default"])(object);
-      }
+      case 'seamless-immutable':
+        if (!_seamlessImmutable["default"].isImmutable(object)) {
+          return (0, _seamlessImmutable["default"])(object);
+        }
 
-      break;
+        break;
+    }
   }
 
   return object;
@@ -103,10 +110,10 @@ var _default = function _default(_ref) {
       config[key] = {};
     }
 
-    var defaultState = config[key].defaultState;
+    var defaultState = adjustDataStructure(config[key].defaultState, dataStructure);
 
     if (config[key].version && outboundState.version !== config[key].version || config[key].expire && Date.now() >= outboundState.expire) {
-      return adjustDataStructure(defaultState, dataStructure);
+      return defaultState || {};
     }
 
     var state = outboundState.state;
@@ -125,7 +132,7 @@ var _default = function _default(_ref) {
             state = JSON.parse(bytes.toString(_encUtf["default"]));
           } catch (error) {
             logError("Error while encrypting ".concat(key, " state"), error);
-            return adjustDataStructure(defaultState, dataStructure);
+            return defaultState || {};
           }
         } else if (compress) {
           try {
@@ -134,7 +141,7 @@ var _default = function _default(_ref) {
             state = JSON.parse(decompressed);
           } catch (error) {
             logError("Error while compressing ".concat(key, " state"), error);
-            return adjustDataStructure(defaultState, dataStructure);
+            return defaultState || {};
           }
         }
       }
@@ -147,13 +154,19 @@ var _default = function _default(_ref) {
 
       switch (dataStructure) {
         case 'immutable':
-          return (0, _immutable.fromJS)(state);
+          state = (0, _immutable.fromJS)(state);
+          return defaultState ? defaultState.mergeDeep(state) : state;
 
         case 'seamless-immutable':
-          return (0, _seamlessImmutable["default"])(state);
-      }
+          state = (0, _seamlessImmutable["default"])(state);
+          return defaultState ? defaultState.merge(state, {
+            deep: false
+          }) : state;
 
-      return state;
+        case 'plain':
+        default:
+          return defaultState ? _objectSpread({}, defaultState, {}, state) : state;
+      }
     }
 
     return outboundState;

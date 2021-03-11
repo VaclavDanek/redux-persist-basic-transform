@@ -3,7 +3,7 @@ This transform allows filter, encrypt, compress, versioning and expiring persist
 
 ## Yarn install
 ```git
-yarn add redux-persist-basic-transform
+yarn add redux-persist-complex-transform
 ```
 
 ### Configuration
@@ -38,7 +38,7 @@ whitelist      | Array<string> | Defines which only variables will be persistent
 
 ## 1. example of usage (plain object state with the default (autoMergeLevel1) state reconciler)
 ```javascript
-import basicTransform from 'redux-persist-basic-transform'
+import basicTransform from 'redux-persist-complex-transform'
 import { reducer as UserDataReduxReducer, INITIAL_STATE as UserDataInitial } from '../Redux/UserDataRedux'
 import { reducer as AppDataReduxReducer, INITIAL_STATE as AppDataInitial } from '../Redux/AppDataRedux'
 
@@ -83,7 +83,7 @@ export const makeRootReducer = (): GlobalState =>
 
 ## 2. example of usage (plain object state with autoMergeLevel2)
 ```javascript
-import basicTransform from 'redux-persist-basic-transform'
+import basicTransform from 'redux-persist-complex-transform'
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'
 
 const reduxConfig = {
@@ -118,7 +118,7 @@ const persistConfig = {
 
 ## 3. example of usage (seamless-immutable)
 ```javascript
-import basicTransform from 'redux-persist-basic-transform'
+import basicTransform from 'redux-persist-complex-transform'
 import { seamlessImmutableReconciler } from 'redux-persist-seamless-immutable'
 
 const reduxConfig = {

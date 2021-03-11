@@ -144,12 +144,21 @@ var _default = function _default(_ref) {
             return defaultState || {};
           }
         }
-      }
+      } // not actually necessary...
+
 
       if (blacklist) {
         blacklist.forEach(function (param) {
           delete state[param];
         });
+      } else if (whitelist) {
+        var stateTemp = {};
+        whitelist.forEach(function (param) {
+          if (state[param]) {
+            stateTemp[param] = state[param];
+          }
+        });
+        state = stateTemp;
       }
 
       switch (dataStructure) {

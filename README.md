@@ -1,8 +1,12 @@
 # Info
 This transform allows filter, encrypt, compress, versioning and expiring persisted data from redux-persist. Also works with immutable and seamless-immutable data structures.
 
-## Yarn install
-```git
+## Installation
+```
+npm install redux-persist-complex-transform
+
+or
+
 yarn add redux-persist-complex-transform
 ```
 

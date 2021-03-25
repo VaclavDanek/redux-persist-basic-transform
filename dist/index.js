@@ -144,16 +144,16 @@ var _default = function _default(_ref) {
             return defaultState || {};
           }
         }
-      } // not actually necessary...
+      } // not actually necessary... just for forgetting old data, which are newly not configured as persistent.
 
 
       if (blacklist) {
         blacklist.forEach(function (param) {
           delete state[param];
         });
-      } else if (whitelist) {
+      } else if (config[key].whitelist) {
         var stateTemp = {};
-        whitelist.forEach(function (param) {
+        config[key].whitelist.forEach(function (param) {
           if (state[param]) {
             stateTemp[param] = state[param];
           }

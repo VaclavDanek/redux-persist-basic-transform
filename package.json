@@ -1,6 +1,6 @@
 {
   "name": "redux-persist-complex-transform",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "This transform allows filter, encrypt, compress, versioning and expiring persisted data from redux-persist. Also works with immutable and seamless-immutable data structures.",
   "keywords": [
     "redux",
@@ -17,26 +17,28 @@
     "name": "Václav Daněk",
     "email": "vaclav.danek@seznam.cz"
   },
+  "license": "MIT",
   "homepage": "https://github.com/VaclavDanek/redux-persist-complex-transform",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VaclavDanek/redux-persist-complex-transform.git"
+  },
   "bugs": {
     "url": "https://github.com/VaclavDanek/redux-persist-complex-transform/issues"
   },
-  "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
     "build": "babel lib --out-dir dist",
     "minify": "minify dist -d dist"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/VaclavDanek/redux-persist-complex-transform.git"
-  },
   "dependencies": {
+    "redux-persist": "^5.4.0"
+  },
+  "optionalDependencies": {
     "crypto-js": "^4.0.0",
     "fast-safe-stringify": "^2.0.7",
     "immutable": "^3.8.2",
     "lz-string": "^1.4.4",
-    "redux-persist": "^5.4.0",
     "seamless-immutable": "^7.1.2"
   },
   "devDependencies": {

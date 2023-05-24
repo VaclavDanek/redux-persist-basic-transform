@@ -6,13 +6,16 @@ import AES from 'crypto-js/aes'
 import LZ from 'lz-string'
 import stringify from 'fast-safe-stringify'
 
-const logError = (message, error) => {
+// types
+import type { DataStructure, IConfig, InboundState, IOutboundState } from './types'
+
+const logError = (message: string, error: unknown) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`[redux-persist-smart-transform] => ${message} =>`, error)
   }
 }
 
-const JSONStringify = (object) => {
+const JSONStringify = (object: any) => {
   try { return JSON.stringify(object) }
   catch (error) {
     // logError(`Error while stringifying, perhaps due to circular references`, error)
@@ -20,42 +23,48 @@ const JSONStringify = (object) => {
   }
 }
 
-const adjustDataStructure = (object, dataStructure = 'plain') => {
-  if (object) {
-    switch (dataStructure) {
-      case 'immutable':
-        if (!Iterable.isIterable(object)) {
-          return fromJS(object)
-        }
-        break
-      case 'seamless-immutable':
-        if (!SeamlessImmutable.isImmutable(object)) {
-          return SeamlessImmutable(object)
-        }
-        break
+const adjustDataStructure = 
+  (object: Record<string, any> | undefined, dataStructure: DataStructure = 'plain'): any => {
+    if (object) {
+      switch (dataStructure) {
+        case 'immutable':
+          if (!Iterable.isIterable(object)) {
+            return fromJS(object)
+          }
+          break
+        case 'seamless-immutable':
+          if (!SeamlessImmutable.isImmutable(object)) {
+            return SeamlessImmutable(object)
+          }
+          break
+      }
     }
+    return object
   }
-  return object
-}
 
-export default ({ config, dataStructure, password, whitelist }) => {
-  return createTransform(
+export default ({ config, dataStructure, password, whitelist }: {
+  config: Record<string, IConfig>;
+  dataStructure: DataStructure;
+  password: string;
+  whitelist: string[];
+}) => (
+  createTransform(
     // transform state coming from redux on its way to being serialized and stored
-    (inboundState, key) => {
+    (inboundState: InboundState, key: string) => {
       if (!config[key]) {
         config[key] = {}
       }
 
-      let state = {}
+      let state: Partial<Record<keyof InboundState, any>> | string = {}
       if (config[key].blacklist) {
-        Object.keys(inboundState).forEach(param => {
-          if (!config[key].blacklist.includes(param)) {
-            state[param] = inboundState[param]
+        for (const [param, value] of Object.entries(inboundState)) {
+          if (!config[key].blacklist?.includes(param)) {
+            state[param] = value
           }
-        })
+        }
       }
       else if (config[key].whitelist) {
-        config[key].whitelist.forEach(param => {
+        config[key].whitelist?.forEach((param: string) => {
           state[param] = inboundState[param]
         })
       }
@@ -71,12 +80,12 @@ export default ({ config, dataStructure, password, whitelist }) => {
       }
       return {
         state,
-        expire: config[key].expire ? (Date.now() + (config[key].expire * 60 * 1000)) : 0,
+        expire: config[key].expire ? (Date.now() + (config[key].expire as number * 60 * 1000)) : 0,
         version: config[key].version || 0,
       }
     },
     // transform state coming from storage, on its way to be rehydrated into redux
-    (outboundState, key) => {
+    (outboundState: IOutboundState, key: string) => {
       if (!config[key]) {
         config[key] = {}
       }
@@ -86,7 +95,7 @@ export default ({ config, dataStructure, password, whitelist }) => {
         return defaultState || {}
       }
 
-      let state = outboundState.state
+      let state: Record<string, any> | string = outboundState.state
       if (state) {
         const { blacklist, compress, encrypt } = config[key]
         if (typeof state === 'string') {
@@ -94,7 +103,7 @@ export default ({ config, dataStructure, password, whitelist }) => {
             try {
               const bytes = AES.decrypt(state, password)
               state = JSON.parse(bytes.toString(Encoder))
-            } catch (error) {
+            } catch (error: unknown) {
               logError(`Error while encrypting ${key} state`, error)
               return defaultState || {}
             }
@@ -103,7 +112,7 @@ export default ({ config, dataStructure, password, whitelist }) => {
             try {
               const decompressed = LZ.decompressFromUTF16(state)
               state = JSON.parse(decompressed)
-            } catch (error) {
+            } catch (error: unknown) {
               logError(`Error while compressing ${key} state`, error)
               return defaultState || {}
             }
@@ -112,13 +121,13 @@ export default ({ config, dataStructure, password, whitelist }) => {
 
         // not actually necessary... just for forgetting old data, which are newly not configured as persistent.
         if (blacklist) {
-          blacklist.forEach(param => {
+          blacklist.forEach((param: string) => {
             delete state[param]
           })
         }
         else if (config[key].whitelist) {
           const stateTemp = {}
-          config[key].whitelist.forEach(param => {
+          config[key].whitelist?.forEach((param: string) => {
             if (state[param]) {
               stateTemp[param] = state[param]
             }
@@ -135,11 +144,11 @@ export default ({ config, dataStructure, password, whitelist }) => {
             return defaultState ? defaultState.merge(state, { deep: false }) : state
           case 'plain':
           default:
-            return defaultState ? { ...defaultState, ...state } : state
+            return defaultState ? { ...defaultState, ...state as Record<string, any> } : state
         }
       }
       return outboundState
     },
     { whitelist: whitelist || Object.keys(config) }
   )
-}
+)
